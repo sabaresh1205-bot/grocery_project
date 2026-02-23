@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Partner Dashboard | Add Product</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: #212529;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            padding-top: 20px;
+            transition: 0.3s;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            padding: 12px 20px;
+            display: block;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+ 
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            margin-top: 56px;
+        }
+
+        @media(max-width: 768px) {
+            .sidebar {
+                left: -250px;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand ms-2" href="#">Partner Panel</a>
+            <a href="{% url 'partnerLogin' %}" class="btn btn-danger btn-sm">Log Out</a>
+            
+        </div>
+    </nav>
+
+
+<div class="sidebar" id="sidebar">
+
+    <a href="{% url 'partnerDashboard' %}">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+    </a>
+
+    <a href="#">
+        <i class="bi bi-people me-2"></i> Users
+    </a>
+
+
+    <a class="d-flex justify-content-between align-items-center active"
+       data-bs-toggle="collapse"
+       href="#productMenu">
+        <span>
+            <i class="bi bi-box me-2"></i> Products
+        </span>
+        <i class="bi bi-chevron-down small"></i>
+    </a>
+
+
+    <div class="collapse show ps-4" id="productMenu">
+        <a href="#" class="py-1 d-block active">
+            <i class="bi bi-plus-circle me-2"></i> Add Product
+        </a>
+        <a href="{% url 'productList' %}" class="py-1 d-block">
+            <i class="bi bi-list-ul me-2"></i> Product List
+        </a>
+    </div>
+
+    <a class="d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#OrderMenu" role="button" aria-expanded="false">
+        <span><i class="bi bi-cart me-2"></i> Orders</span>
+        <i class="bi bi-chevron-down small"></i>
+    </a>
+    <div class="collapse ps-4" id="OrderMenu">
+        <a href="{% url 'pending_orders' %}" class="py-1 d-block"><i class="bi bi-plus-circle me-2"></i> Pending Orders</a>
+        <a href="{% url 'completed_orders' %}" class="py-1 d-block"><i class="bi bi-list-ul me-2"></i> Completed Orders</a>
+    </div> 
+    
+    <a href="#"><i class="bi bi-bar-chart me-2"></i> Reports</a>
+    <a href="#"><i class="bi bi-gear me-2"></i> Settings</a>
+
+</div>
+
+
+<div class="content">
+
+    <h4 class="fw-bold mb-4">Add New Product</h4>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" name="product_name" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Product Description</label>
+                    <textarea name="product_description" class="form-control" rows="4" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Price (₹)</label>
+                        <input type="number" step="0.01" name="product_price" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="product_quantity" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Cover Image</label>
+                    <input type="file" name="product_cover_image" class="form-control" required>
+                </div>
+
+                <div class="text-end">
+                    <button type="reset" class="btn btn-secondary me-2">Clear</button>
+                    <button type="submit" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.getElementById("menuToggle").addEventListener("click", function () {
+        document.getElementById("sidebar").classList.toggle("show");
+    });
+</script>
+
+</body>
+</html>
