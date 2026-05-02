@@ -1,5 +1,6 @@
-Django
-gunicorn
-pymysql
-whitenoise
+django
 python-dotenv
+mysqlclient
+razorpay
+gunicorn
+Pillow
