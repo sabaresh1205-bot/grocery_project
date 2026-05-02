@@ -1,5 +1,7 @@
 Django
 gunicorn
-pymysql
+mysqlclient
+razorpay
+Pillow
 whitenoise
 python-dotenv
