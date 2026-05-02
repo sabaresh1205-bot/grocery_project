@@ -13,10 +13,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # SECURITY
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
-DEBUG = True
-ALLOWED_HOSTS = []
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # Applications
 INSTALLED_APPS = [
@@ -62,11 +63,11 @@ WSGI_APPLICATION = 'grocery_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        'NAME': os.getenv("railway"),
+        'USER': os.getenv("root"),
+        'PASSWORD': os.getenv("ogfDrNmBZgujhaCquylmdKAvJVkIIGCu"),
+        'HOST': os.getenv("mysql.railway.internal"),
+        'PORT': os.getenv("3306"),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
@@ -109,3 +110,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 print("ENV FILE EXISTS:", (BASE_DIR / ".env").exists())
 print("DB_HOST VALUE:", os.getenv("DB_HOST"))
+
