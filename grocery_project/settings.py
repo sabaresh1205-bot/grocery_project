@@ -63,11 +63,11 @@ WSGI_APPLICATION = 'grocery_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv("railway"),
-        'USER': os.getenv("root"),
-        'PASSWORD': os.getenv("ogfDrNmBZgujhaCquylmdKAvJVkIIGCu"),
-        'HOST': os.getenv("mysql.railway.internal"),
-        'PORT': os.getenv("3306"),
+        'NAME': os.getenv("DB_NAME"),
+        'USER': os.getenv("DB_USER"),
+        'PASSWORD': os.getenv("DB_PASSWORD"),
+        'HOST': os.getenv("DB_HOST"),
+        'PORT': os.getenv("DB_PORT","3306"),
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
