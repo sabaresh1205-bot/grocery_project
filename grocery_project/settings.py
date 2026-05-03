@@ -131,7 +131,7 @@ INSTALLED_APPS += ['cloudinary', 'cloudinary_storage']
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'sabaresh',
-    'API_KEY': 'rzp_test_SA3XQOweETGwLq',
-    'API_SECRET': 'eaDJXysKRNshT87X2WTQ8zYz',
+    'CLOUD_NAME': 'dfgkhejzn',
+    'API_KEY': '161736518637423',
+    'API_SECRET': 'zMgcf39b4nU2mVrc5vj-gXfa57c',
 }
