@@ -17,7 +17,11 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = [
+    "groceryproject-production-a41a.up.railway.app",
+    "localhost",
+    "127.0.0.1"
+]
 
 # Applications
 INSTALLED_APPS = [
@@ -115,3 +119,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 print("ENV FILE EXISTS:", (BASE_DIR / ".env").exists())
 print("DB_HOST VALUE:", os.getenv("DB_HOST"))
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://groceryproject-production-a41a.up.railway.app"
+]
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
