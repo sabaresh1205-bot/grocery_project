@@ -5,6 +5,9 @@ Django settings for grocery_project project.
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,3 +136,4 @@ CLOUDINARY_STORAGE = {
     'API_KEY': '161736518637423',
     'API_SECRET': 'zMgcf39b4nU2mVrc5vj-gXfa57c',
 }
+
