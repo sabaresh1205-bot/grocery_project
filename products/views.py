@@ -301,41 +301,52 @@ def contact(request):
     return render(request, 'contact.html')
 
 def PlaceOrder(request):
+    # ✅ check login properly
+    if not request.session.get('customer_id'):
+        return redirect('customerLogin')
+
     cart = request.session.get('cart', {})
+
     if not cart:
         return redirect('viewCart')
+
     if request.method == "POST":
-        total = sum(
-            item['ProductPrice'] * item['qty']
-            for item in cart.values()
-        )
-
-        order = Orders.objects.create(
-            user_id=request.session.get('customer_id'),
-            order_number=generate_order_id(),
-            name=request.POST.get('cst_name'),
-            phone=request.POST.get('cst_phone'),
-            address=request.POST.get('cst_address'),
-            total_amount=total,
-            payment_method='Razorpay',
-            payment_status='Pending',
-            order_status='Pending'
-        )
-
-        for product_id, item in cart.items():
-            OrderItems.objects.create(
-                order_id=order.order_id,
-                item_pro_id=int(product_id),       
-                item_name=item['ProductName'],      
-                item_price=item['ProductPrice'],    
-                quantity=item['qty'],
-                subtotal=item['ProductPrice'] * item['qty']
+        try:
+            total = sum(
+                float(item['ProductPrice']) * int(item['qty'])
+                for item in cart.values()
             )
 
-        request.session['cart'] = {}
-        request.session.modified = True
+            order = Orders.objects.create(
+                user_id=request.session.get('customer_id'),  # ✅ FIXED
+                order_number=generate_order_id(),
+                name=request.POST.get('cst_name'),
+                phone=request.POST.get('cst_phone'),
+                address=request.POST.get('cst_address'),
+                total_amount=total,
+                payment_method='Razorpay',
+                payment_status='Pending',
+                order_status='Pending'
+            )
 
-        return redirect('order_review', order_id=order.order_id)
+            for product_id, item in cart.items():
+                OrderItems.objects.create(
+                    order_id=order.order_id,
+                    item_pro_id=int(product_id),
+                    item_name=item['ProductName'],
+                    item_price=float(item['ProductPrice']),
+                    quantity=int(item['qty']),
+                    subtotal=float(item['ProductPrice']) * int(item['qty'])
+                )
+
+            request.session['cart'] = {}
+            request.session.modified = True
+
+            return redirect('order_review', order_id=order.order_id)
+
+        except Exception as e:
+            print("ERROR IN PLACE ORDER:", e)   # 🔥 IMPORTANT
+            return HttpResponse("Something went wrong")
 
     return render(request, 'checkout.html')
 
