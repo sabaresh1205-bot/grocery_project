@@ -13,8 +13,6 @@ class ProductAdmin(admin.ModelAdmin):
 
     image_preview.short_description = "Image"
 
-
-# ✅ REGISTER ONLY ONCE
 admin.site.register(Products, ProductAdmin)
 admin.site.register(Partners)
 admin.site.register(Customers)

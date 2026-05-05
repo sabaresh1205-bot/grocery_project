@@ -39,7 +39,7 @@ class Products(models.Model):
     product_description = models.TextField()
     product_price = models.FloatField()
     product_quantity = models.IntegerField()
-    product_cover_image = models.ImageField(upload_to='products/', blank=True, null=True)
+    product_cover_image = models.URLField()
     product_status = models.CharField(max_length=255)
 
     class Meta:
