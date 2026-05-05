@@ -33,6 +33,7 @@ urlpatterns = [
     path('delete/<int:product_id>/', deleteProduct, name='deleteProduct'),
     path('edit/<int:product_id>/', editProduct, name='editProduct'),
     path('contact/',contact, name="contact"),
+    path('my-orders/', my_orders, name='my_orders'),
     path('admin/', admin.site.urls),
 ]
 

@@ -196,6 +196,8 @@ def productList(request):
     return render(request, 'partners/product_List.html',{'products':Myproducts})
 
 def add_to_cart(request, product_id):
+    if not request.session.get('id'):
+        return redirect('customerLogin')
     cart= request.session.get('cart', {})
     CartProduct =get_object_or_404(Products, product_id=product_id)
     product_id=str(product_id)
@@ -216,6 +218,8 @@ def add_to_cart(request, product_id):
     return redirect('products')
 
 def viewCart(request):
+    if not request.session.get('id'):
+        return redirect('customerLogin')
     cart = request.session.get('cart', {})
 
     total = 0
@@ -439,12 +443,42 @@ def order_details(request, orderId):
 
     if not partner_id:
         return redirect('partnerLogin')
-    orders = Orders.objects.get(order_id=orderId)
-    orderItems = OrderItems.objects.filter(order_id=orderId)
 
-    return render(request, 'partners/order-details.html', {'orders': orders,'orderitems': orderItems})
+    order = get_object_or_404(Orders, order_id=orderId)
+
+    # Get only items that belong to THIS partner
+    order_items = OrderItems.objects.filter(order_id=orderId)
+
+    items = []
+
+    for item in order_items:
+        product = Products.objects.filter(product_id=item.item_pro_id, product_by=partner_id).first()
+
+        if product:
+            items.append({
+                'name': item.item_name,
+                'price': item.item_price,
+                'qty': item.quantity,
+                'subtotal': item.subtotal,
+                'image': product.product_cover_image
+            })
+
+    return render(request, 'partners/order-details.html', {
+        'order': order,
+        'items': items
+    })
 
 def generate_order_id():
     return str(int(time.time()))[-6:] + str(random.randint(10, 99))
+
+def my_orders(request):
+    if not request.session.get('id'):
+        return redirect('customerLogin')
+
+    orders = Orders.objects.filter(user_id=request.session.get('id'))
+
+    return render(request, 'my_orders.html', {
+        'orders': orders
+    })
 
 # 6527 6589 0000 1005
