@@ -211,6 +211,7 @@ def productList(request):
 
 def add_to_cart(request, product_id):
     if not request.session.get('id'):
+        request.session['next'] = request.path
         return redirect('customerLogin')
     cart= request.session.get('cart', {})
     CartProduct =get_object_or_404(Products, product_id=product_id)
@@ -232,7 +233,7 @@ def add_to_cart(request, product_id):
     return redirect('products')
 
 def viewCart(request):
-    if not request.session.get('id'):
+    if not request.session.get('customer_id'):
         request.session['next'] = 'viewCart'
         return redirect('customerLogin')
     cart = request.session.get('cart', {})
