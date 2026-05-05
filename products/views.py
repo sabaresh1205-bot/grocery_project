@@ -3,7 +3,7 @@ import json
 import random
 import time
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Partners
@@ -155,30 +155,19 @@ def partnerDashboard(request):
         'partner_name': request.session.get('partner_name')
     })
 
+import cloudinary.uploader
+
 def addProducts(request):
     if request.method == "POST":
         image = request.FILES.get('product_cover_image')
 
-        uploaded_image = None
+        print("IMAGE:", image)  # check file coming
 
         if image:
             result = cloudinary.uploader.upload(image)
-            uploaded_image = result['secure_url']   # VERY IMPORTANT
+            print("UPLOAD RESULT:", result)  # 🔥 VERY IMPORTANT
 
-        Products.objects.create(
-            product_by=request.session.get('id'),
-            product_created=timezone.now(),
-            product_name=request.POST.get('product_name'),
-            product_description=request.POST.get('product_description'),
-            product_price=request.POST.get('product_price'),
-            product_quantity=request.POST.get('product_quantity'),
-            product_cover_image=uploaded_image,   # SAVE URL NOT FILE
-            product_status='In Stock'
-        )
-
-        return render(request, 'partners/add_Products.html', {
-            'success': 'Product Added Successfully'
-        })
+            return HttpResponse(result['secure_url'])  # TEMP TEST
 
     return render(request, 'partners/add_Products.html')
 
