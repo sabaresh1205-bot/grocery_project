@@ -305,10 +305,10 @@ def PlaceOrder(request):
         )
 
         order = Orders.objects.create(
-            user_id=1,  
+            user_id=request.session.get('id'),
             order_number=generate_order_id(),
             name=request.POST.get('cst_name'),
-            phone=int(request.POST.get('cst_phone')),
+            phone=request.POST.get('cst_phone'),
             address=request.POST.get('cst_address'),
             total_amount=total,
             payment_method='Razorpay',
