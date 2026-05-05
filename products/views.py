@@ -207,7 +207,7 @@ def add_to_cart(request, product_id):
             'ProductName': CartProduct.product_name,
             'ProductPrice': float(CartProduct.product_price),
             'qty': 1,
-            'proimg': CartProduct.product_cover_image.url
+            'proimg': CartProduct.product_cover_image
         }
 
     request.session['cart'] = cart
