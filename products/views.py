@@ -63,12 +63,19 @@ def customerLogin(request):
             user = Customers.objects.get(customer_email=email)
 
             if check_password(password, user.customer_password):
-                request.session.flush()  # 🔥 clear old session
+                request.session.flush()
 
                 request.session['customer_id'] = user.customer_id
                 request.session['customer_name'] = user.customer_name
 
+                # 🔥 redirect to previous page if exists
+                next_page = request.session.pop('next', None)
+
+                if next_page:
+                    return redirect(next_page)
+
                 return redirect('customerDashboard')
+
             else:
                 return render(request, "customer_Login.html", {
                     'error': "Invalid email or password"
@@ -85,8 +92,13 @@ def customerDashboard(request):
     if not request.session.get('customer_id'):
         return redirect('customerLogin')
 
+    products = Products.objects.all()
+    orders = Orders.objects.filter(user_id=request.session.get('customer_id'))
+
     return render(request, "customer_Dashboard.html", {
-        'customer_name': request.session.get('customer_name')
+        'customer_name': request.session.get('customer_name'),
+        'products': products,
+        'orders': orders
     })
 
 def partnerRegister(request):
@@ -221,6 +233,7 @@ def add_to_cart(request, product_id):
 
 def viewCart(request):
     if not request.session.get('id'):
+        request.session['next'] = 'viewCart'
         return redirect('customerLogin')
     cart = request.session.get('cart', {})
 
@@ -303,6 +316,7 @@ def contact(request):
 def PlaceOrder(request):
     # ✅ check login properly
     if not request.session.get('customer_id'):
+        request.session['next'] = 'checkOut'
         return redirect('customerLogin')
 
     cart = request.session.get('cart', {})
