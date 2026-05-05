@@ -63,18 +63,14 @@ def customerLogin(request):
             user = Customers.objects.get(customer_email=email)
 
             if check_password(password, user.customer_password):
-                request.session.flush()
-
                 request.session['customer_id'] = user.customer_id
                 request.session['customer_name'] = user.customer_name
 
-                # 🔥 redirect to previous page if exists
-                next_page = request.session.pop('next', None)
+                response = redirect('customerDashboard')
 
-                if next_page:
-                    return redirect(next_page)
+                response.set_cookie('customer_id', user.customer_id)
 
-                return redirect('customerDashboard')
+                return response
 
             else:
                 return render(request, "customer_Login.html", {
@@ -210,21 +206,24 @@ def productList(request):
     return render(request, 'partners/product_List.html',{'products':Myproducts})
 
 def add_to_cart(request, product_id):
-    if not request.session.get('id'):
-        request.session['next'] = request.path
+    customer_id = request.session.get('customer_id') or request.COOKIES.get('customer_id')
+
+    if not customer_id:
         return redirect('customerLogin')
-    cart= request.session.get('cart', {})
-    CartProduct =get_object_or_404(Products, product_id=product_id)
-    product_id=str(product_id)
+
+    cart = request.session.get('cart', {})
+    product = get_object_or_404(Products, product_id=product_id)
+
+    product_id = str(product_id)
 
     if product_id in cart:
         cart[product_id]['qty'] += 1
     else:
         cart[product_id] = {
-            'ProductName': CartProduct.product_name,
-            'ProductPrice': float(CartProduct.product_price),
+            'ProductName': product.product_name,
+            'ProductPrice': float(product.product_price),
             'qty': 1,
-            'proimg': CartProduct.product_cover_image
+            'proimg': product.product_cover_image
         }
 
     request.session['cart'] = cart
