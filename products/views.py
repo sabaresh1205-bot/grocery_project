@@ -347,7 +347,7 @@ def create_payment(request, order_id):
     if request.method == "POST":
         if not order.razorpay_order_id:
             rp_order = client.order.create({
-                "amount": int(order.total_amount * 100),
+                "amount": int(float(order.total_amount) * 100),
                 "currency": "INR",
                 "payment_capture": 1
             })
