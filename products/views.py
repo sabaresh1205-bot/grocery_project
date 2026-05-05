@@ -56,34 +56,36 @@ def customerRegister(request):
 
 def customerLogin(request):
     if request.method == "POST":
-        email=request.POST.get('customer_email')
-        password=request.POST.get('customer_password')
+        email = request.POST.get('customer_email')
+        password = request.POST.get('customer_password')
 
         try:
-            users= Customers.objects.get(customer_email=email)
+            user = Customers.objects.get(customer_email=email)
 
-            if check_password(password, users.customer_password):
-                request.session['id'] = users.customer_id
-                request.session['customer_name']= users.customer_name
+            if check_password(password, user.customer_password):
+                request.session.flush()  # 🔥 clear old session
+
+                request.session['customer_id'] = user.customer_id
+                request.session['customer_name'] = user.customer_name
+
                 return redirect('customerDashboard')
             else:
-                return render(request, "customer_Login.html",{
-                    'error': "Invalod email or password"
+                return render(request, "customer_Login.html", {
+                    'error': "Invalid email or password"
                 })
-            
+
         except Customers.DoesNotExist:
-            return render(request, "customer_Login.html",{
+            return render(request, "customer_Login.html", {
                 'error': "Customer not found"
             })
-
 
     return render(request, 'customer_Login.html')
 
 def customerDashboard(request):
-    if not request.session.get('id'):
+    if not request.session.get('customer_id'):
         return redirect('customerLogin')
-    
-    return render(request, "customer_Dashboard.html",{
+
+    return render(request, "customer_Dashboard.html", {
         'customer_name': request.session.get('customer_name')
     })
 
@@ -126,14 +128,17 @@ def partnerRegister(request):
 def partnerLogin(request):
     if request.method == "POST":
         email = request.POST.get('partner_email')
-        passwoed = request.POST.get('partner_password')
+        password = request.POST.get('partner_password')
 
         try:
             user = Partners.objects.get(partner_email=email)
 
-            if check_password(passwoed, user.partner_password):
-                request.session['id'] = user.partner_id
+            if check_password(password, user.partner_password):
+                request.session.flush()  # 🔥 IMPORTANT
+
+                request.session['partner_id'] = user.partner_id
                 request.session['partner_name'] = user.partner_name
+
                 return redirect('partnerDashboard')
             else:
                 return render(request, "partners/partner_Login.html", {
@@ -148,16 +153,13 @@ def partnerLogin(request):
     return render(request, 'partners/partner_Login.html')
 
 def partnerDashboard(request):
-    if not request.session.get('id'):
-        return redirect('partners/partnerLogin')
-    
-    return render(request, "partners/partner_Dashboard.html",{
+    if not request.session.get('partner_id'):
+        return redirect('partnerLogin')
+
+    return render(request, "partners/partner_Dashboard.html", {
         'partner_name': request.session.get('partner_name')
     })
 
-import cloudinary.uploader
-
-import cloudinary.uploader
 
 def addProducts(request):
     if request.method == "POST":
@@ -309,7 +311,7 @@ def PlaceOrder(request):
         )
 
         order = Orders.objects.create(
-            user_id=request.session.get('id'),
+            user_id=request.session.get('customer_id'),
             order_number=generate_order_id(),
             name=request.POST.get('cst_name'),
             phone=request.POST.get('cst_phone'),
@@ -472,10 +474,10 @@ def generate_order_id():
     return str(int(time.time()))[-6:] + str(random.randint(10, 99))
 
 def my_orders(request):
-    if not request.session.get('id'):
+    if not request.session.get('customer_id'):
         return redirect('customerLogin')
 
-    orders = Orders.objects.filter(user_id=request.session.get('id'))
+    orders = Orders.objects.filter(user_id=request.session.get('customer_id'))
 
     return render(request, 'my_orders.html', {
         'orders': orders
