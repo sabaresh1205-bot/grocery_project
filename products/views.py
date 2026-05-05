@@ -157,27 +157,30 @@ def partnerDashboard(request):
 
 def addProducts(request):
     if request.method == "POST":
-        product_name = request.POST.get('product_name')
-        product_description = request.POST.get('product_description')
-        product_price = request.POST.get('product_price')
-        product_quantity = request.POST.get('product_quantity')
-        product_cover_image = request.FILES.get('product_cover_image')
+        image = request.FILES.get('product_cover_image')
+
+        uploaded_image = None
+
+        if image:
+            result = cloudinary.uploader.upload(image)
+            uploaded_image = result['secure_url']   # VERY IMPORTANT
 
         Products.objects.create(
             product_by=request.session.get('id'),
             product_created=timezone.now(),
-            product_name=product_name,
-            product_description=product_description,
-            product_price=product_price,
-            product_quantity=product_quantity,
-            product_cover_image=product_cover_image,
+            product_name=request.POST.get('product_name'),
+            product_description=request.POST.get('product_description'),
+            product_price=request.POST.get('product_price'),
+            product_quantity=request.POST.get('product_quantity'),
+            product_cover_image=uploaded_image,   # SAVE URL NOT FILE
             product_status='In Stock'
         )
 
-        return render(request, 'partners/add_Products.html',{
-            'success':'Product Added Successfully'
+        return render(request, 'partners/add_Products.html', {
+            'success': 'Product Added Successfully'
         })
-    return render(request,'partners/add_Products.html')
+
+    return render(request, 'partners/add_Products.html')
 
 def productList(request):
     Myproducts = Products.objects.filter(product_by=request.session.get('id'))
